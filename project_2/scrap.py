@@ -32,16 +32,17 @@ else:
 #pip install beautufulsoup4
 from bs4 import BeautifulSoup
 from selenium import webdriver
-import requests
+from urllib.parse import quote
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
+import requests
 import time
-from urllib.parse import quote
+import pandas as pd
 
 
 driver = webdriver.Chrome('/chromedriver/chromedriver.exe')
 
-name='SK하이닉스'
+name='삼성전자'
 search_name= quote(name)
 
 #news_office_checked=1009 : 매일경제
@@ -54,8 +55,7 @@ de = '2023.03.15'
 search_url = f"https://search.naver.com/search.naver?where=news&query={search_name}&sm=tab_opt&sort=0&photo=0&field=0&pd=3&ds={ds}&de={de}&docid=&related=0&mynews=1&office_type=1&office_section_code=3&news_office_checked={office}&nso=so%3Ar%2Cp%3Afrom20230313to20230314&is_sug_officeid=0"
 driver.get(search_url)
 
-print(search_url)
-
+news_list = []
 while True :
     response = requests.get(driver.current_url)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -66,10 +66,15 @@ while True :
     # 요소가 존재하는 경우, 텍스트를 출력합니다.
     if elements:
         for element in elements:
-            print(element.text)
-            print(element.get('href')) # 요소의 href 속성값을 출력합니다.
-            print('-' * 50) # 구분선을 출력합니다.
-    
+            #if name in element.text:
+                news_dict = {}
+                news_dict['종목명'] = name
+                news_dict['신문사'] = office
+                news_dict['date'] = de
+                news_dict['title'] = element.text
+                news_dict['url'] = element.get('href')
+                
+                news_list.append(news_dict)
     next_button = driver.find_element(By.CSS_SELECTOR, '.btn_next')
     
     try:
@@ -83,9 +88,6 @@ while True :
 
 
 driver.quit()
-
-
-
 
 
 
