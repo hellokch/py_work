@@ -5,8 +5,6 @@ Created on Thu Mar  9 16:45:46 2023
 @author: 김충환
 """
 
-
-
 import pandas as pd
 import requests
 
