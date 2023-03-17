@@ -29,12 +29,17 @@ def scrap_url(in_name, in_date):
     #news_office_checked=1009 : 매일경제
     #news_office_checked=1015 : 한국경제
     #news_office_checked=1011 : 서울경제
-    office_list = ['1009','1015','1011']
+    office_list = ['1009','1011','1015']
     news_list = []
     driver = webdriver.Chrome('/chromedriver/chromedriver.exe')
     for office in office_list:
         search_url = f"https://search.naver.com/search.naver?where=news&query={search_name}&sm=tab_opt&sort=0&photo=0&field=0&pd=3&ds={ds}&de={de}&docid=&related=0&mynews=1&office_type=1&office_section_code=3&news_office_checked={office}&nso=so%3Ar%2Cp%3Afrom20230313to20230314&is_sug_officeid=0"
         driver.get(search_url)
+        
+        if "에 대한 검색결과가 없습니다." in driver.page_source:
+            print(f'{name}에 대한 검색결과가 없습니다.')
+            continue
+        
         while True :
             response = requests.get(driver.current_url)
             soup = BeautifulSoup(response.text, 'html.parser')
@@ -67,11 +72,12 @@ def scrap_url(in_name, in_date):
     df = pd.DataFrame(news_list)
     df = df.drop_duplicates()
     df.to_csv(f'data/{name}_{date}.csv', index=False)
+    print(f'data/{name}_{date}.csv 저장')
 
 
 
 
-scrap_url("삼성전자","20230316")
+scrap_url("카카오페이","20230311")
 
 
 
