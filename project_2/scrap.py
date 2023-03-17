@@ -27,8 +27,8 @@ def scrap_url(in_name, in_date):
     ds = date
     de = date    
     #news_office_checked=1009 : 매일경제
-    #news_office_checked=1015 : 한국경제
     #news_office_checked=1011 : 서울경제
+    #news_office_checked=1015 : 한국경제
     office_list = ['1009','1011','1015']
     news_list = []
     driver = webdriver.Chrome('/chromedriver/chromedriver.exe')
@@ -75,11 +75,29 @@ def scrap_url(in_name, in_date):
     print(f'data/{name}_{date}.csv 저장')
 
 
-
-
-scrap_url("카카오페이","20230311")
-
+scrap_url("삼성전자","20230316")
 
 
 
 
+# 1015 한국경제
+search_url = 'https://www.hankyung.com/economy/article/202303101092i'
+
+driver = webdriver.Chrome('/chromedriver/chromedriver.exe')
+driver.get(search_url)
+#request 방법으로 안됨
+#response = requests.get(search_url)
+page_source = driver.page_source
+
+soup = BeautifulSoup(page_source, "html.parser")
+article_body = soup.find('div', {'id': 'articletxt'})
+
+# div, figure 요소를 제거합니다.
+for elem in article_body.select('div, figure'):
+    elem.extract()
+
+text = article_body.get_text().strip()
+print(text)
+
+
+driver.quit()
