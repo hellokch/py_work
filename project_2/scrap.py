@@ -37,7 +37,7 @@ def scrap_url(in_name, in_date):
         driver.get(search_url)
         
         if "에 대한 검색결과가 없습니다." in driver.page_source:
-            print(f'{name}에 대한 검색결과가 없습니다.')
+            print(f'{name}에 대한 {office}의 검색결과가 없습니다.')
             continue
         
         while True :
