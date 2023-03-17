@@ -13,7 +13,7 @@ import requests
 url = "https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo"
 
 params = {
-    "serviceKey": "t6/gaaB02N4JxaUblFxqzO9HBFssqAG/DNrsK+WS9XcziRaUdWgmyiqa9P0wa/1jHYa7RBo9kmtqxU+BQt/EEA==",
+    "serviceKey": "",
     "numOfRows": "5",
     "pageNo": "1",
     "resultType": "json",
