@@ -44,7 +44,7 @@ def scrap_url(in_name, in_date):
             response = requests.get(driver.current_url)
             soup = BeautifulSoup(response.text, 'html.parser')
             elements = soup.select('.news_tit')
-            # 요소가 존재하는 경우, 텍스트를 출력합니다.
+            # 요소가 존재하는 경우, 텍스트를 출력
             if elements:
                 for element in elements:
                     #if name in element.text:
@@ -79,7 +79,7 @@ scrap_url("삼성전자","20230316")
 
 
 
-
+'''
 # 1015 한국경제
 search_url = 'https://www.hankyung.com/economy/article/202303101092i'
 
@@ -101,3 +101,4 @@ print(text)
 
 
 driver.quit()
+'''
