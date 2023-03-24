@@ -4,6 +4,11 @@ Created on Thu Mar 23 09:22:02 2023
 
 @author: 김충환
 """
+#pip install --upgrade pip
+#pip install tensorflow
+#pip install tensorflow-gpu
+#python -c "import tensorflow as tf; print(tf.__version__)"
+#pip install opencv-python
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
@@ -104,6 +109,8 @@ model.compile(optimizer="adam", loss='binary_crossentropy',\
 
 history = model.fit(train_x, train_y, epochs=25, batch_size=32, validation_split=0.25)
 
+
+
 plt.figure(figsize=(12,4))
 plt.subplot(1,2,1)
 plt.plot(history.history['loss'],'b-', label='loss')
@@ -137,6 +144,72 @@ plt.ylabel('true label', fontsize =15)
 plt.xticks(range(2),['red','white'],rotation=45)
 plt.yticks(range(2),['red','white'],rotation=0)
 plt.show
+
+
+
+import pandas as df
+
+red.info()
+white.info()
+wine.info()
+
+index = 5000
+wine.iloc[index]
+test_wine_np = wine.iloc[index].to_numpy()
+test_wine_np = ((test_wine_np-wine.min())/(wine.max()-wine.min())).to_numpy() #정규화
+test_wine_np
+
+test_wine_x=test_wine_np[:-1]
+test_wine_x
+
+test_wine_x = test_wine_x.reshape((1, 12))
+
+
+test_wine_pre = model.predict(test_wine_x)
+
+
+print(np.argmax(test_wine_pre),":",test_wine_np)
+
+
+
+
+truecount = 0
+total_samples = 1700 - 1500
+
+for index in range(1500, 1700):
+    test_wine_np = wine.iloc[index].to_numpy()
+    test_wine_np = ((test_wine_np - wine.min()) / (wine.max() - wine.min())).to_numpy()  # 정규화
+    test_wine_x = test_wine_np[:-1]
+    test_wine_x = test_wine_x.reshape((1, 12))
+    
+    test_wine_pre = model.predict(test_wine_x)
+    
+    predicted_class = np.argmax(test_wine_pre)
+    true_class = test_wine_np[-1]
+    
+    if predicted_class == true_class:
+        truecount += 1
+    
+    print(predicted_class, ":", true_class)
+
+accuracy = truecount / total_samples
+print(accuracy)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #pip install opencv-python
 
@@ -241,24 +314,8 @@ model.summary()
 
 train_y[0]
 train_x.shape
-history = model.fit(train_x, train_y, epochs=5,\
-                    validation_split=0.25, batch_size=128)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#history = model.fit(train_x, train_y, epochs=5,\
+#                    validation_split=0.25, batch_size=128)
 
 
 
