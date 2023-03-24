@@ -11,10 +11,10 @@ Created on Fri Mar 24 09:00:56 2023
 #pip install opencv-python
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import Flatten
 from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
+from tensorflow.keras.layers import MaxPool2D, Dropout, Flatten, Dense
+from tensorflow.keras.preprocessing.image import load_img, img_to_array, ImageDataGenerator
 import pandas as pd
 import matplotlib. pyplot as plt
 import seaborn as sns
@@ -75,6 +75,109 @@ train_y[0]
 train_x.shape
 history = model.fit(train_x, train_y, epochs=5,\
                     validation_split=0.25, batch_size=128)
+
+    
+
+plt.figure(figsize=(12,4))
+plt.subplot(1,2,1)
+plt.plot(history.history['loss'],'b-', label='loss')
+plt.plot(history.history['val_loss'], 'r--',label='val_loss')
+plt.xlabel('Epoch')
+plt.legend()
+plt.subplot(1,2,2)
+plt.plot(history.history['accuracy'],'g-', label='accuracy')
+plt.plot(history.history['val_accuracy'], 'k--',label='val_accuracy')
+plt.xlabel('Epoch')
+plt.ylim(0.7,1)
+plt.legend()
+plt.show()
+
+model.evaluate(test_x, test_y)
+
+#=============================================================
+model = Sequential([
+    Conv2D(input_shape=(28,28,1), kernel_size=(3,3),filters=3),
+    MaxPool2D(strides=(2,2)),
+    Conv2D(kernel_size=(3,3), filters=32),
+    MaxPool2D(strides=(2,2)),
+    Conv2D(kernel_size=(3,3), filters=64),
+    Flatten(),
+    Dense(units=128, activation='relu'),
+    Dropout(rate=0.3),
+    Dense(units=10, activation='softmax')
+    ])
+model.summary()
+
+model.compile(optimizer="adam",
+              loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+history = model.fit(train_x, train_y, epochs=5,\
+                    validation_split=0.25, batch_size=128)
+
+
+    #그래프상 과적합 해소
+plt.figure(figsize=(12,4))
+plt.subplot(1,2,1)
+plt.plot(history.history['loss'],'b-', label='loss')
+plt.plot(history.history['val_loss'], 'r--',label='val_loss')
+plt.xlabel('Epoch')
+plt.legend()
+plt.subplot(1,2,2)
+plt.plot(history.history['accuracy'],'g-', label='accuracy')
+plt.plot(history.history['val_accuracy'], 'k--',label='val_accuracy')
+plt.xlabel('Epoch')
+plt.ylim(0.7,1)
+plt.legend()
+plt.show()
+
+model.evaluate(test_x, test_y)
+
+
+
+# from tensorflow.keras.preprocessing.image\
+#     import load_img, img_to_array, ImageDataGenerator
+
+
+
+train_datagen = ImageDataGenerator(\
+                                   horizontal_flip = True,
+                                   vertical_flip = True,
+                                   shear_range=0.5,
+                                   brightness_range=[0.5,1.0],
+                                   zoom_range=0.2,
+                                   width_shift_range=0.1,
+                                   height_shift_range=0.1,
+                                   rotation_range=30,
+                                   fill_mode='nearest')
+
+image_path = tf.keras.utils.get_file\
+    ('cat.jpg', 'http://bit.ly/33U6mH9')
+
+
+image = plt.imread(image_path)
+image.shape
+image = image.reshape((1,)+image.shape)
+image.shape
+
+
+image
+#cv2.imshow("cat",image)
+#cv2.waitKey(0)
+
+
+
+train_generator = train_datagen.flow(image, batch_size=1)
+
+fig = plt.figure(figsize=(5,5))
+fig.suptitle("augmented image")
+for i in range(25):
+    data = next(train_generator)
+    image = data[0]
+    plt.subplot(5,5,i+1)
+    plt.xticks([])
+    plt.yticks([])
+    plt.imshow(np.array(image,dtype=np.uint8))
+plt.show()
+
 
 
 
