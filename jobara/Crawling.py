@@ -1,13 +1,13 @@
 #pip install selenium  
 #pip install beautufulsoup4
-from bs4 import BeautifulSoup
-from selenium import webdriver
 import requests
 import time
 import pandas as pd
 import re
-
-
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from tqdm import tqdm
 
 def page_calc(tot_num):
     if tot_num % 20 == 0:
@@ -21,6 +21,10 @@ def init_data_url(start_page, end_page):
     pre_url = 'https://www.jobkorea.co.kr'
     #드라이버 실행
     driver = webdriver.Chrome('/chromedriver/chromedriver.exe')
+    options = Options()
+    options.headless = True  # 브라우저 창을 숨기도록 설정
+    
+    driver = webdriver.Chrome('/chromedriver/chromedriver.exe', options=options)
     
     #url 리스트 객체 초기화
     names = []
@@ -52,7 +56,7 @@ def init_data_url(start_page, end_page):
             urls.append(url_without_params)
             idx = full_url.split('View/')[1].split('?')[0]
             idxs.append(idx)
-        print(f'{pagenum} 완 : {pagenum}/{end_page}')
+        print(f'{pagenum}/{end_page}')
    
     # 판다스 데이터프레임으로 저장
     data = {'name': names, 'field': fields, 'url': urls}
@@ -75,44 +79,51 @@ def read_context(file_name):
     cnt = 0
     texts = []
     # df데이터프레임 url컬럼만큼 반복. 
-    for url in df['url']:
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, 'html.parser') #파싱
-        dl_con = soup.find('dl','qnaLists') # 'dl'태그의 'qnaLists'클래스를 탐색 후 dl_con에 저장
+    for url in tqdm(df['url']):
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+        except (requests.exceptions.HTTPError, requests.exceptions.RequestException):
+            print(f'{url}에서 오류 발생. 다음 URL로 넘어갑니다.')
+            continue
+        soup = BeautifulSoup(response.text, 'html.parser')
+        dl_con = soup.find('dl', 'qnaLists')
+        
+        # dl_con이 None인 경우 처리 추가
+        if dl_con is None:
+            print(f'{url}에서 dl_con을 찾을 수 없습니다. 다음 URL로 넘어갑니다.')
+            continue
+    
         text = dl_con.text.split('질문Q')
         for i in range(1, len(text)):
             qna = text[i].split('보기\n\n\n답변')
             question = qna[0].replace('\n', '')
             answer = qna[1].replace('\n', '').replace('\r', '')
-            # 글자수 정보 제거하기#
             answer = re.sub(r'글자수\s[\d,]+자[\d,]+Byte', '', answer)
-            #texts 객체에 data frame으로 저장할 데이터 할당 #
             texts.append([df.loc[df['url'] == url, 'name'].iloc[0],
                           df.loc[df['url'] == url, 'field'].iloc[0],
                           df.loc[df['url'] == url, 'url'].iloc[0].split('View/')[1],
                           question,
                           answer])
         cnt += 1
-        print(f'{cnt} 번째 url 완')
+        time.sleep(0.1)
     
     # DataFrame으로 변환
     qna_df = pd.DataFrame(texts, columns=['기업명', '산업분류','게시판번호' , '질문', '답변'])
     
     # csv 파일로 저장
-    qna_df.to_csv(f'data/context_{file_name}.csv', index=False, encoding='utf-8')
+    qna_df.to_csv(f'data/context_{file_name}', index=False, encoding='utf-8')
 
     
 
 
 ### 처음에 해당 폴더 내 ./data/ 디렉토리를 만들어야함
 #==============================
+# #총 이력서의 건수를 입력하세요 (처음에만)
+# end_page = page_calc(7569)
 # 시작 페이지와 끝 페이지 입력 (url 불러오기)
-init_data_url(1,2)
+# init_data_url(1,end_page)
 
 ## url을 불러온 파일 이름을 실행시키면 됨
-read_context('init_urls_1to2.csv')
-
-# #총 이력서의 건수를 입력하세요 (처음에만)
-# end_page = page_calc(20)
-
+read_context('init_1to379.csv')
 
