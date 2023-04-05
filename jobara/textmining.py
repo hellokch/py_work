@@ -1,4 +1,9 @@
-#pip install konlpy
+# pip install konlpy
+# pip install pandas
+# pip install matplotlib
+# pip install seaborn
+# pip install scikit-learn
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
@@ -87,16 +92,14 @@ df = pd.read_csv('data/cleaned_text.csv', sep=',')
 
 df['분류'] = df['질문'].apply(classify_question)
 # df['분류'].value_counts()
-df_sample = df.sample(n=1000)
-df_sample[df_sample['분류'] == '미분류']['질문'].head(30)
+# df_sample = df.sample(n=1000)
+# df_sample[df_sample['분류'] == '미분류']['질문'].head(30)
 
 
-cates =['지원동기',
+cates =['지원동기 및 입사후 포부',
         '직무역량',
         '성격의 장단점 및 가치관',
-        '성정과정 및 배경',
-        '미분류',
-        '입사후 포부']
+        '성정과정 및 배경',]
 
     # 불용어 제거
 stopwords = ['자', '대해', '시오', '및', '이내', '무엇', '그', '가장',
@@ -163,8 +166,6 @@ train_data['분류'].value_counts()
 
 
 # 텍스트 데이터를 수치화하기 위한 TfidfVectorizer 불러오기
-
-
 
 # TfidfVectorizer 객체 생성
 vectorizer = TfidfVectorizer(stop_words=stopwords)
