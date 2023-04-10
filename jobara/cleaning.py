@@ -113,7 +113,8 @@ groth_label = ["당신의 출신 지역은 어디이며, 그곳에서 어떤 경
                 "가장 좋아하는 취미나 관심사가 무엇인가요?",
                 "새로운 분야나 일을 시작할 때, 스스로 동기부여를 하는 방법은 무엇인가요?",
                 "당신이 가장 무서워하는 것은 무엇인가요? 그것을 극복하기 위해 노력한 경험이 있나요?",
-                "성장과정및 경험"]
+                "성장과정및 경험",
+                "학교생활 생활태도"]
 
 
 # 토큰화(tokenization)와 스테밍(stemming) 등의 과정을 거쳐서 단어 단위로 분리하고,
@@ -192,8 +193,7 @@ plt.show()
 
 
 
-
-
+##분류 분석
 ####################
 motiv_label
 compet_label
@@ -229,10 +229,6 @@ df_merged = pd.concat([df_merged, new_rows])
 
 
 
-
-
-
-
 # '미분류' 행 제거
 train_data = df_merged[df_merged['category'] != '미분류']
 train_data.info()
@@ -255,11 +251,6 @@ classifier = LogisticRegression(random_state=0)
 
 # 모델 학습
 classifier.fit(X_train, y_train)
-
-
-
-
-
 
 # 확률 임계값 설정
 threshold = 0.3
@@ -288,6 +279,18 @@ unclassified_data['분류_예측'].value_counts()
 
 
 unclassified_data[unclassified_data['분류_예측'] == '미분류']['Q']
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
