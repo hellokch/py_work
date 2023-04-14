@@ -1,10 +1,10 @@
 # pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
 
-from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google_auth_oauthlib.flow import InstalledAppFlow
 import pandas as pd
+import io
 
 # Google API credentials 파일 경로
 creds_path = 'path/to/auth.json'
@@ -45,8 +45,13 @@ try:
     content = file_content.decode('utf-8')
 
     # Pandas DataFrame으로 변환
-    df = pd.read_csv(content)
+    df = pd.read_csv(io.StringIO(content))
     print(df.head())
+
 except HttpError as error:
     print(f'An error occurred: {error}')
+
+
+df.info()
+df.tail()
 
