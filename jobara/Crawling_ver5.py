@@ -93,7 +93,8 @@ def init_data_url(start_page, end_page):
         pagenum = i
         
         search_url =\
-            f'https://www.jobkorea.co.kr/starter/PassAssay?Page={pagenum}&Pass_An_Stat=1'
+            f'{pre_url}/starter/'\
+            f'PassAssay?Page={pagenum}&Pass_An_Stat=1'
         driver.get(search_url)
         time.sleep(1)
         response = requests.get(driver.current_url)
@@ -139,7 +140,8 @@ def read_context(file_name):
         try:
             response = requests.get(url)
             response.raise_for_status()
-        except (requests.exceptions.HTTPError, requests.exceptions.RequestException):
+        except (requests.exceptions.HTTPError,\
+                requests.exceptions.RequestException):
             print(f'{url}에서 오류 발생. 다음 URL로 넘어갑니다.')
             continue
 
@@ -149,7 +151,7 @@ def read_context(file_name):
         ans_div_txs = soup.find_all('div', 'tx')[:len(que_div_txs)]
 
         if ans_div_txs is None:
-            print(f'{url}에서 ans_div_txs을 찾을 수 없습니다. 다음 URL로 넘어갑니다.')
+            print(f'{url}에서 ans_div_txs을 찾을 수 없습니다. 넘어갑니다.')
             continue
 
         company_name = in_df.loc[in_df['url'] == url, 'name'].iloc[0]
